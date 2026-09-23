@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="nb" data-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#090a0b">
+  <meta name="description" content="En ryddig kalkulator for hverdagen og vitenskapelige beregninger. Fungerer også uten nett.">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Kalkulator">
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="icon" type="image/svg+xml" href="./icons/icon.svg">
+  <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png">
+  <link rel="stylesheet" href="./styles.css">
+  <title>Kalkulator</title>
+  <script>try{document.documentElement.dataset.theme=localStorage.getItem('calc_theme')==='light'?'light':'dark'}catch(e){}</script>
+  <script src="./app.js" defer></script>
+</head>
+<body>
+  <main class="app" id="app">
+    <h1 class="visually-hidden">Kalkulator</h1>
+    <button class="icon-button settings-control" id="settingsButton" aria-label="Åpne innstillinger" title="Innstillinger"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/><circle cx="9" cy="6" r="2" fill="var(--panel)"/><circle cx="16" cy="12" r="2" fill="var(--panel)"/><circle cx="10" cy="18" r="2" fill="var(--panel)"/></svg></button>
+
+    <section class="readout" id="readout" tabindex="0" aria-label="Beregning. Sveip ned for historikk, eller trykk Enter">
+      <div class="readout-top" id="readoutMeta" hidden><span class="memory-flag" id="memoryFlag" hidden>M</span></div>
+      <div class="expression" id="expression" aria-label="Uttrykk"></div>
+      <output class="result" id="result" aria-live="polite" aria-atomic="true">0</output>
+    </section>
+    <section class="program-readout" id="programReadout" tabindex="0" aria-label="Programmeringsverdier. Sveip ned for historikk, eller trykk Enter" hidden>
+      <div class="program-expression" id="programExpression" aria-live="polite"></div>
+      <div class="base-list" role="group" aria-label="Velg tallgrunnlag">
+        <button class="base-row" data-base="16" aria-pressed="false"><span class="base-name">HEX</span><span class="base-value" id="hexValue">0</span></button>
+        <button class="base-row" data-base="10" aria-pressed="true"><span class="base-name">DEC</span><span class="base-value" id="decValue">0</span></button>
+        <button class="base-row" data-base="8" aria-pressed="false"><span class="base-name">OCT</span><span class="base-value" id="octValue">0</span></button>
+        <button class="base-row" data-base="2" aria-pressed="false"><span class="base-name">BIN</span><span class="base-value" id="binValue">0</span></button>
+      </div>
+    </section>
+
+    <button class="mode-toggle" id="modeToggle" aria-label="Standard modus. Bytt til vitenskapelig">Standard <span aria-hidden="true">›</span></button>
+
+    <div class="key-area" id="keyArea">
+      <section class="science" id="science" aria-label="Vitenskapelige funksjoner" hidden>
+        <div class="memory-row">
+          <button data-memory="mc">MC</button><button data-memory="mr">MR</button><button data-memory="mplus">M+</button><button data-memory="mminus">M−</button><button data-memory="ms">MS</button>
+        </div>
+        <div class="science-grid">
+          <button data-action="inverse-mode" id="inverseButton" aria-pressed="false">INV</button>
+          <button data-action="open">(</button><button data-action="close">)</button><button data-action="ans">ANS</button><button data-constant="π">π</button>
+          <button data-fn="sin" data-inverse="asin">sin</button><button data-fn="cos" data-inverse="acos">cos</button><button data-fn="tan" data-inverse="atan">tan</button><button data-fn="ln" data-inverse="exp">ln</button><button data-fn="log" data-inverse="pow10">log</button>
+          <button data-fn="sqrt" data-inverse="cbrt">√</button><button data-action="square" data-inverse-action="cube">x²</button><button data-op="^" data-inverse-action="nthroot">xʸ</button><button data-action="reciprocal">1/x</button><button data-action="factorial">n!</button>
+          <button data-constant="e">e</button><button data-action="angle" id="angleButton">DEG</button><button data-action="percent">%</button><button data-action="copy" aria-label="Kopier resultat">Kopier</button><button data-action="paste" aria-label="Lim inn tall">Lim inn</button>
+        </div>
+      </section>
+      <section class="keypad" id="standardPad" aria-label="Talltastatur">
+        <button class="utility danger" data-action="clear" aria-label="Nullstill">AC</button>
+        <button class="utility" data-action="backspace" aria-label="Slett siste tegn"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4H21v16H9L2 12l7-8Zm4 5 5 6m0-6-5 6"/></svg></button>
+        <button class="utility" data-action="percent">%</button><button class="operator" data-op="/">÷</button>
+        <button data-digit="7">7</button><button data-digit="8">8</button><button data-digit="9">9</button><button class="operator" data-op="*">×</button>
+        <button data-digit="4">4</button><button data-digit="5">5</button><button data-digit="6">6</button><button class="operator" data-op="-">−</button>
+        <button data-digit="1">1</button><button data-digit="2">2</button><button data-digit="3">3</button><button class="operator" data-op="+">+</button>
+        <button class="utility" data-action="sign">±</button><button data-digit="0">0</button><button data-action="dot" id="decimalButton">,</button><button class="equals" data-action="equals">=</button>
+      </section>
+      <section class="program-pad" id="programPad" aria-label="Programmeringstastatur" hidden>
+        <div class="program-actions" aria-label="Bitoperasjoner"><button data-program-action="and">AND</button><button data-program-action="or">OR</button><button data-program-action="xor">XOR</button><button data-program-action="shl">≪</button><button data-program-action="shr">≫</button></div>
+        <div class="program-letters" id="programLetters" hidden aria-label="Heksadesimale siffer"></div>
+        <div class="program-digits" id="programDigits"></div>
+      </section>
+    </div>
+    <div class="overlay" id="overlay" hidden></div>
+    <aside class="sheet" id="historySheet" role="dialog" aria-modal="true" aria-label="Historikk" hidden>
+      <div class="sheet-head"><div><small>ARKIV</small><h2>Historikk</h2></div><button class="icon-button close" data-close aria-label="Lukk historikk">×</button></div>
+      <div class="history-list" id="historyList"></div>
+      <button class="sheet-link" id="clearHistory">Tøm historikk</button>
+    </aside>
+    <aside class="sheet" id="settingsSheet" role="dialog" aria-modal="true" aria-label="Innstillinger" hidden>
+      <div class="sheet-head"><div><small>PREFERANSER</small><h2>Innstillinger</h2></div><button class="icon-button close" data-close aria-label="Lukk innstillinger">×</button></div>
+      <div class="settings-content">
+        <label class="setting"><span>Tema</span><select id="themeSelect"><option value="dark">Mørk</option><option value="light">Lys</option></select></label>
+        <label class="setting"><span>Desimaltegn</span><select id="decimalSelect"><option value=",">Komma (,)</option><option value=".">Punktum (.)</option></select></label>
+        <label class="setting"><span>Vinkelenhet</span><select id="angleSelect"><option value="DEG">Grader (DEG)</option><option value="RAD">Radianer (RAD)</option></select></label>
+        <label class="setting"><span>Haptisk respons</span><input id="vibrationCheck" type="checkbox"></label>
+        <label class="setting"><span>Lyd</span><input id="soundCheck" type="checkbox"></label>
+        <p class="help">Sveip ned på resultatfeltet for historikk. Sveip sidelengs på tastaturet mellom Standard, Vitenskapelig og Programmer, eller trykk på modusnavnet. I Programmer sveiper du sidelengs i displayet mellom HEX, DEC, OCT og BIN, eller trykker på en linje. Heltallsregning og bitoperasjoner bruker 32 bit med fortegn; ÷ kutter desimaldelen. Hold en funksjonsknapp inne for forklaring og eksempel. Langtrykk ⌫ tømmer uttrykket. % deler tallet foran på 100.</p>
+        <button class="install" id="installButton" hidden>Installer kalkulator</button>
+      </div>
+    </aside>
+    <aside class="sheet guide-sheet" id="guideSheet" role="dialog" aria-modal="true" aria-labelledby="guideTitle" hidden>
+      <div class="sheet-head"><div><small>KNAPPEGUIDE</small><h2 id="guideTitle">Funksjon</h2></div><button class="icon-button close" data-close aria-label="Lukk forklaring">×</button></div>
+      <div class="guide-content" id="guideContent"></div>
+    </aside>
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  </main>
+</body>
+</html>
