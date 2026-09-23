@@ -13,9 +13,10 @@
     if(!Number.isFinite(value))throw Error('Udefinert resultat');
     if(Math.abs(value)<1e-12)value=0;
     const n=Number(value.toPrecision(12));
-    return n.toLocaleString(settings.decimal==='.'?'en-US':'nb-NO',{useGrouping:false,maximumSignificantDigits:12});
+    return n.toLocaleString(settings.decimal==='.'?'en-US':'de-DE',{useGrouping:true,maximumSignificantDigits:12});
   };
   const raw=(number)=>Number(number.toPrecision(12)).toString();
+  const formatEntry=(text)=>{const [integer,fraction]=text.split('.');const group=settings.decimal===','?'.':',';const whole=integer.replace(/\B(?=(\d{3})+(?!\d))/g,group);return fraction===undefined?whole:whole+settings.decimal+fraction};
   const pretty=(s)=>String(s).replace(/asin/g,'sin⁻¹').replace(/acos/g,'cos⁻¹').replace(/atan/g,'tan⁻¹').replace(/pow10/g,'10^').replace(/sqrt/g,'√').replace(/cbrt/g,'∛').replace(/\*/g,'×').replace(/\//g,'÷').replace(/-/g,'−').replace(/\./g,settings.decimal);
   const showToast=(message)=>{const t=$('#toast');t.textContent=message;t.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>t.classList.remove('show'),2200)};
   const guides={
@@ -90,7 +91,7 @@
     const value=evaluated?lastAnswer:preview();
     // Keep the literal number visible while typing: 0, and 0. must not collapse to 0.
     const standalone=/^-?(?:\d+(?:\.\d*)?|\.\d+)$/.test(expr);
-    result.textContent=evaluated?fmt(lastAnswer):standalone?pretty(expr):/\.$/.test(expr)?pretty(expr):value!==null?fmt(value):expr?pretty(expr):'0';
+    result.textContent=evaluated?fmt(lastAnswer):standalone?formatEntry(expr):/\.$/.test(expr)?pretty(expr):value!==null?fmt(value):expr?pretty(expr):'0';
     $('#memoryFlag').hidden=!memorySet;$('#readoutMeta').hidden=!memorySet;
     result.scrollLeft=result.scrollWidth;expression.scrollLeft=expression.scrollWidth;
   }
@@ -127,7 +128,7 @@
   function memoryAction(action){try{const v=evaluated?lastAnswer:expr?evaluate(balanced(expr)):0;switch(action){case 'mc':memory=0;memorySet=false;break;case 'mr':if(!memorySet)return;appendConstant(raw(memory));return;case 'ms':memory=v;memorySet=true;break;case 'mplus':memory=(memorySet?memory:0)+v;memorySet=true;break;case 'mminus':memory=(memorySet?memory:0)-v;memorySet=true;break}showToast(memorySet?'Minne: '+fmt(memory):'Minne tømt');render()}catch{showToast('Fullfør uttrykket først')}}
   const signed32=(value)=>BigInt.asIntN(32,value);
   function programValue(){const input=program.entry.replace(/\s/g,'');const prefix=program.base===16?'0x':program.base===8?'0o':program.base===2?'0b':'';return signed32(BigInt(prefix+input))}
-  function programText(value,base,group=false){const v=signed32(value);if(base===10)return v.toString();let s=BigInt.asUintN(32,v).toString(base).toUpperCase();if(group&&base===2)s=s.replace(/\B(?=(?:[01]{4})+(?![01]))/g,'\u2009');return s}
+  function programText(value,base,group=false){const v=signed32(value);if(base===10)return group?formatEntry(v.toString()):v.toString();let s=BigInt.asUintN(32,v).toString(base).toUpperCase();if(group&&base===2)s=s.replace(/\B(?=(?:[01]{4})+(?![01]))/g,'\u2009');return s}
   const programSymbol={add:'+',sub:'−',mul:'×',div:'÷',and:'AND',or:'OR',xor:'XOR',shl:'≪',shr:'≫'};
   function programCalculate(a,op,b){switch(op){case 'add':return signed32(a+b);case 'sub':return signed32(a-b);case 'mul':return signed32(a*b);case 'div':if(b===0n)throw Error('Kan ikke dele på null');return signed32(a/b);case 'and':return signed32(a&b);case 'or':return signed32(a|b);case 'xor':return signed32(a^b);case 'shl':return signed32(a<<(BigInt.asUintN(32,b)&31n));case 'shr':return signed32(a>>(BigInt.asUintN(32,b)&31n));default:throw Error('Ukjent operasjon')}}
   function renderProgram(){const value=programValue();for(const [base,id] of [[16,'hexValue'],[10,'decValue'],[8,'octValue'],[2,'binValue']]){$('#'+id).textContent=programText(value,base,true)}document.querySelectorAll('[data-base]').forEach(b=>b.setAttribute('aria-pressed',String(Number(b.dataset.base)===program.base)));$('#programExpression').textContent=program.pending?programText(program.acc,program.base)+' '+programSymbol[program.pending]:program.label}
@@ -188,7 +189,7 @@
   $('#overlay').addEventListener('click',closeSheet);document.querySelectorAll('[data-close]').forEach(b=>b.addEventListener('click',closeSheet));
   $('#historyList').addEventListener('click',e=>{const b=e.target.closest('[data-index]');if(!b)return;const h=history[Number(b.dataset.index)];if(h.kind==='program'){program.base=[2,8,10,16].includes(h.base)?h.base:10;program.entry=programText(BigInt(h.result),program.base);program.acc=null;program.pending=null;program.awaiting=false;program.label='';renderProgramDigits();setMode('programmer');renderProgram()}else{expr=raw(h.result);evaluated=false;setMode('standard');render()}closeSheet()});
   $('#clearHistory').addEventListener('click',()=>{history=[];storeHistory();renderHistory();showToast('Historikk tømt')});
-  for(const [id,key] of [['themeChoices','theme'],['decimalChoices','decimal'],['angleChoices','angle']])$('#'+id).addEventListener('click',e=>{const button=e.target.closest('button[data-value]');if(!button)return;settings[key]=button.dataset.value;store();syncSettings();if(key==='decimal')renderHistory()});
+  for(const [id,key] of [['themeChoices','theme'],['decimalChoices','decimal'],['angleChoices','angle']])$('#'+id).addEventListener('click',e=>{const button=e.target.closest('button[data-value]');if(!button)return;settings[key]=button.dataset.value;store();syncSettings();if(key==='decimal'){renderProgram();renderHistory()}});
   for(const [id,key] of [['vibrationToggle','vibration'],['soundToggle','sound']])$('#'+id).addEventListener('click',()=>{settings[key]=!settings[key];store();syncSettings()});
   document.addEventListener('keydown',e=>{if(!$('#overlay').hidden){if(e.key==='Escape')closeSheet();return}if(e.target.closest?.('button,select,input'))return;if(mode==='programmer'){const key=e.key.toUpperCase();if(/^[0-9A-F]$/.test(key)&&parseInt(key,16)<program.base)programDigit(key);else if(e.key==='Backspace')programAction('backspace');else if(e.key==='Escape')programAction('clear');else if(e.key==='Enter'||e.key==='='){e.preventDefault();programAction('equals')}else if({'+':'add','-':'sub','*':'mul','/':'div'}[e.key])programAction({'+':'add','-':'sub','*':'mul','/':'div'}[e.key]);return}if(/^[0-9]$/.test(e.key))inputDigit(e.key);else if(e.key==='.'||e.key===',')dot();else if(['+','-','*','/','^'].includes(e.key))operator(e.key);else if(e.key==='Enter'||e.key==='='){e.preventDefault();equals()}else if(e.key==='Backspace')perform('backspace');else if(e.key==='Escape')perform('clear');else if(e.key==='%')perform('percent')});
   window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();installEvent=e;$('#installButton').hidden=false});
