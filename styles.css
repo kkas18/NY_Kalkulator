@@ -62,3 +62,27 @@
 @media(max-height:750px){.program-readout{min-height:150px;padding-top:35px}.program-pad{gap:5px}.program-actions,.program-letters,.program-digits{gap:5px}.program-actions button,.program-letters button{min-height:34px}.program-digits button{min-height:43px}.base-row{min-height:36px;padding:3px 8px}}
 @media(max-height:690px){.program-readout{padding-top:35px}.base-row{min-height:32px}}
 @media(max-height:600px){.app{gap:4px;padding-top:calc(env(safe-area-inset-top) + 4px);padding-bottom:calc(env(safe-area-inset-bottom) + 6px)}.mode-toggle{min-height:30px}.readout{min-height:70px}.expression{min-height:20px;font-size:15px}.result{font-size:clamp(32px,9vw,48px)}.program-pad{gap:4px}.program-actions,.program-letters,.program-digits{gap:4px}.program-actions button,.program-letters button{min-height:29px}.program-digits button{min-height:38px}.program-readout{min-height:0;padding:42px 2px 5px}.base-row{min-height:26px;padding:2px 8px}.program-expression{min-height:14px;font-size:10px}}
+
+/* Settings: compact choices, restrained color and a single optional help section. */
+#settingsSheet{padding:9px 22px calc(env(safe-area-inset-bottom) + 20px);border-color:var(--line);border-bottom:0;border-radius:26px 26px 0 0}
+#settingsSheet::before{content:"";align-self:center;width:34px;height:4px;margin:0 0 19px;border-radius:8px;background:var(--line);flex:none}
+#settingsSheet .sheet-head{margin-bottom:10px}
+#settingsSheet .sheet-head h2{font-size:20px;font-weight:650;letter-spacing:-.025em}
+#settingsSheet .close{width:38px;height:38px;border:0;background:transparent;color:var(--muted);font-size:24px}
+#settingsSheet .settings-content{min-height:0;scrollbar-width:thin}
+#settingsSheet .setting{min-height:65px;padding:10px 1px;gap:8px;font-size:14px;font-weight:550;border-color:color-mix(in srgb,var(--line) 70%,transparent)}
+#settingsSheet .choice{display:flex;flex:none;gap:2px;padding:3px;border-radius:11px;background:var(--key)}
+#settingsSheet .choice button{min-width:54px;min-height:35px;padding:0 11px;border:0;border-radius:8px;background:transparent;color:var(--muted);font-size:13px;font-weight:650;touch-action:manipulation}
+#settingsSheet .choice button[aria-pressed="true"]{background:var(--panel);color:var(--text);box-shadow:0 1px 4px var(--shadow)}
+#settingsSheet .choice button:focus-visible,#settingsSheet .toggle:focus-visible,#settingsSheet summary:focus-visible{outline:2px solid var(--accent-strong);outline-offset:2px}
+#settingsSheet .toggle{position:relative;width:42px;height:25px;flex:none;border:1px solid var(--line);border-radius:99px;background:var(--key);touch-action:manipulation}
+#settingsSheet .toggle::after{content:"";position:absolute;top:3px;left:3px;width:17px;height:17px;border-radius:50%;background:var(--muted);transition:transform .18s ease,background .18s ease}
+#settingsSheet .toggle[aria-checked="true"]{background:color-mix(in srgb,var(--accent-strong) 30%,var(--key));border-color:color-mix(in srgb,var(--accent-strong) 45%,var(--line))}
+#settingsSheet .toggle[aria-checked="true"]::after{transform:translateX(17px);background:var(--text)}
+#settingsSheet .settings-help{border-bottom:1px solid var(--line);color:var(--muted)}
+#settingsSheet .settings-help summary{list-style:none;padding:18px 2px;font-size:13px;font-weight:600;cursor:pointer;touch-action:manipulation}
+#settingsSheet .settings-help summary::-webkit-details-marker{display:none}
+#settingsSheet .settings-help summary::after{content:"⌄";float:right;font-size:18px;line-height:12px;transition:transform .18s}
+#settingsSheet .settings-help[open] summary::after{transform:rotate(180deg)}
+#settingsSheet .help{padding:0 3px 10px;font-size:12px;line-height:1.55}
+#settingsSheet .help p{margin:0 0 10px}

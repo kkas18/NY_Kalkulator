@@ -74,14 +74,14 @@
       <button class="sheet-link" id="clearHistory">Tøm historikk</button>
     </aside>
     <aside class="sheet" id="settingsSheet" role="dialog" aria-modal="true" aria-label="Innstillinger" hidden>
-      <div class="sheet-head"><div><small>PREFERANSER</small><h2>Innstillinger</h2></div><button class="icon-button close" data-close aria-label="Lukk innstillinger">×</button></div>
+      <div class="sheet-head"><div><h2>Innstillinger</h2></div><button class="icon-button close" data-close aria-label="Lukk innstillinger">×</button></div>
       <div class="settings-content">
-        <label class="setting"><span>Tema</span><select id="themeSelect"><option value="dark">Mørk</option><option value="light">Lys</option></select></label>
-        <label class="setting"><span>Desimaltegn</span><select id="decimalSelect"><option value=",">Komma (,)</option><option value=".">Punktum (.)</option></select></label>
-        <label class="setting"><span>Vinkelenhet</span><select id="angleSelect"><option value="DEG">Grader (DEG)</option><option value="RAD">Radianer (RAD)</option></select></label>
-        <label class="setting"><span>Haptisk respons</span><input id="vibrationCheck" type="checkbox"></label>
-        <label class="setting"><span>Lyd</span><input id="soundCheck" type="checkbox"></label>
-        <p class="help">Sveip ned på resultatfeltet for historikk. Sveip sidelengs på tastaturet mellom Standard, Vitenskapelig og Programmer, eller trykk på modusnavnet. I Programmer sveiper du sidelengs i displayet mellom HEX, DEC, OCT og BIN, eller trykker på en linje. Heltallsregning og bitoperasjoner bruker 32 bit med fortegn; ÷ kutter desimaldelen. Hold en funksjonsknapp inne for forklaring og eksempel. Langtrykk ⌫ tømmer uttrykket. % deler tallet foran på 100.</p>
+        <div class="setting"><span id="themeLabel">Utseende</span><div class="choice" role="group" aria-labelledby="themeLabel" id="themeChoices"><button type="button" data-value="dark" aria-pressed="true">Mørk</button><button type="button" data-value="light" aria-pressed="false">Lys</button></div></div>
+        <div class="setting"><span id="decimalLabel">Desimaltegn</span><div class="choice" role="group" aria-labelledby="decimalLabel" id="decimalChoices"><button type="button" data-value="," aria-pressed="true">,</button><button type="button" data-value="." aria-pressed="false">.</button></div></div>
+        <div class="setting"><span id="angleLabel">Vinkelenhet</span><div class="choice" role="group" aria-labelledby="angleLabel" id="angleChoices"><button type="button" data-value="DEG" aria-pressed="true">DEG</button><button type="button" data-value="RAD" aria-pressed="false">RAD</button></div></div>
+        <div class="setting"><span id="vibrationLabel">Vibrasjon</span><button type="button" class="toggle" id="vibrationToggle" role="switch" aria-labelledby="vibrationLabel" aria-checked="true"></button></div>
+        <div class="setting"><span id="soundLabel">Lyd</span><button type="button" class="toggle" id="soundToggle" role="switch" aria-labelledby="soundLabel" aria-checked="false"></button></div>
+        <details class="settings-help"><summary>Slik bruker du kalkulatoren</summary><div class="help"><p>Sveip sidelengs på tastaturet for å bytte mellom Standard, Vitenskapelig og Programmer. Trykk på modusnavnet for å bytte direkte.</p><p>Sveip ned på displayet for historikk. I Programmer kan du sveipe sidelengs på displayet mellom HEX, DEC, OCT og BIN. Beregningene bruker 32 bit med fortegn.</p><p>Hold en funksjonsknapp inne for forklaring og eksempel. Hold ⌫ inne for å tømme uttrykket. % deler tallet foran på 100.</p></div></details>
         <button class="install" id="installButton" hidden>Installer kalkulator</button>
       </div>
     </aside>
